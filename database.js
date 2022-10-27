@@ -11,35 +11,94 @@ const pool = mysql.createPool({
   database: process.env.MYSQL_DATABASE
 }).promise()
 
-export async function getNotes() {
+//record functions
+
+export async function getRecords() {
 //will take out the first item returned and store in variable rows
-  const [rows] = await pool.query("SELECT * FROM notes")
+  const [rows] = await pool.query("SELECT * FROM records")
   return rows
 }
 
 //Values with a ? are then stipulated in brackets outside the query - stops sql injection attacks
-export async function getNote(id) {
+export async function getRecord(id) {
   const [rows] = await pool.query(`
   SELECT * 
-  FROM notes
-  WHERE id = ?
+  FROM records
+  WHERE recordID = ?
   `, [id])
   return rows[0]
 }
 
-const notes = await getNotes()
-console.log(notes);
-
-
-export async function createNote(title, contents) {
+export async function createRecord(speciesID, notes, dateSighted, userID, abundance, sex, lifeStage, basisOfRecord, lat, lng) {
   const [result] = await pool.query(`
-  INSERT INTO notes (title, contents)
-  VALUES (?, ?)
-  `, [title, contents])
+  INSERT INTO records (speciesID, notes, dateSighted, userID, abundance, sex, lifeStage, basisOfRecord, lat, lng )
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `, [speciesID, notes, dateSighted, userID, abundance, sex, lifeStage, basisOfRecord, lat, lng])
   const id = result.insertId
   //then returns the inserted record
-  return getNote(id)
+  return getRecord(id)
 }
 
-const insert = await createNote('test', 'test')
-console.log(insert);
+//user functions
+
+export async function getUsers() {
+  //will take out the first item returned and store in variable rows
+    const [rows] = await pool.query("SELECT * FROM users")
+    return rows
+  }
+  
+
+  //Values with a ? are then stipulated in brackets outside the query - stops sql injection attacks
+  export async function getUser(id) {
+    const [rows] = await pool.query(`
+    SELECT * 
+    FROM users
+    WHERE userID = ?
+    `, [id])
+    return rows[0]
+  }
+  
+
+
+  export async function createUser(nickname, email) {
+    const [result] = await pool.query(`
+    INSERT INTO users (nickname, email )
+    VALUES (?, ?)
+    `, [nickname, email])
+    const id = result.insertId
+    //then returns the inserted record
+    return getUser(id)
+  }
+  
+
+  //species functions
+  
+
+  export async function getSpecies() {
+    //will take out the first item returned and store in variable rows
+      const [rows] = await pool.query("SELECT * FROM species")
+      return rows
+    }
+    
+  
+    //Values with a ? are then stipulated in brackets outside the query - stops sql injection attacks
+    export async function getSpecie(id) {
+      const [rows] = await pool.query(`
+      SELECT * 
+      FROM species
+      WHERE speciesID = ?
+      `, [id])
+      return rows[0]
+    }
+    
+  
+  
+    export async function createSpecies(nickname, email) {
+      const [result] = await pool.query(`
+      INSERT INTO species (nickname, email )
+      VALUES (?, ?)
+      `, [nickname, email])
+      const id = result.insertId
+      //then returns the inserted record
+      return getSpecies(id)
+    }
