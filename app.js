@@ -1,8 +1,7 @@
 
 import express from "express";
-import {getSpeciesOne, createSpecies, deleteSpecies, getRecords, getRecord, getUser, deleteRecord, getUsers, deleteUser  } from './database.js'
+import { getSpecies, getSpeciesOne, createSpecies, deleteSpecies, getRecords, updateRecord, getRecord, getUser, deleteRecord, getUsers, deleteUser  } from './database.js'
 
-import { getSpecies } from './controllers/species.js'
 
 const app = express()
 
@@ -33,10 +32,18 @@ app.delete("/species/:id", async (req, res) => {
   res.status(200).send(deletedSpecies)
 })
 
+
+app.put("/species/:id", async (req, res) => {
+
+  const id = req.params.id
+  const updatedSpecies = await updateSpecies(id, req.body)
+  res.status(200).send(updatedSpecies)
+})
+
 //records
 
 app.get("/records", async (req, res) => {
-  const records = await getRecords(id)
+  const records = await getRecords()
   res.send(records)
 })
 
@@ -56,6 +63,13 @@ app.delete("/records/:id", async (req, res) => {
   const id = req.params.id
   const deletedRecord = await deleteRecord(id)
   res.status(200).send(deletedRecord)
+})
+
+app.put("/records/:id", async (req, res) => {
+
+  const id = req.params.id
+  const updatedRecord = await updateRecord(id, req.body)
+  res.status(200).send(updatedRecord)
 })
 
 //users
@@ -84,7 +98,12 @@ app.delete("/users/:id", async (req, res) => {
   res.status(200).send(deletedUser)
 })
 
+app.put("/users/:id", async (req, res) => {
 
+  const id = req.params.id
+  const updatedUser = await updateUser(id, req.body)
+  res.status(200).send(updatedUser)
+})
 
 
 app.use((err, req, res, next) => {
